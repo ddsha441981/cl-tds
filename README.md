@@ -8,11 +8,13 @@
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![CI](https://github.com/ddsha441981/cl-tds/actions/workflows/ci.yml/badge.svg)](https://github.com/ddsha441981/cl-tds/actions/workflows/ci.yml)
+[![crates.io](https://img.shields.io/crates/v/cl-tds.svg)](https://crates.io/crates/cl-tds)
+[![docs.rs](https://docs.rs/cl-tds/badge.svg)](https://docs.rs/cl-tds)
 [![Rust](https://img.shields.io/badge/Rust-1.56+-orange.svg)](https://www.rust-lang.org)
 [![Dependencies](https://img.shields.io/badge/Dependencies-0-brightgreen.svg)](#)
 [![Memory](https://img.shields.io/badge/Memory-1_MB_fixed-purple.svg)](#)
 
-[Getting Started](#getting-started) · [How It Works](#how-it-works) · [Benchmarks](#benchmarks) · [API Reference](#api-reference)
+[Documentation](https://docs.rs/cl-tds) · [Getting Started](#getting-started) · [How It Works](#how-it-works) · [Benchmarks](#benchmarks) · [API Reference](#api-reference)
 
 </div>
 
