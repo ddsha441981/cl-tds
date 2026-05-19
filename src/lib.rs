@@ -375,7 +375,11 @@ pub fn decay_steps(cell_ts: u32, current_epoch: u64) -> u32 {
 /// Halves the count value `steps` times (right-shift by `steps`).
 #[inline(always)]
 fn apply_decay(count: u32, steps: u32) -> u32 {
-    if steps >= MAX_DECAY { 0 } else { count >> steps }
+    if steps >= MAX_DECAY {
+        0
+    } else {
+        count >> steps
+    }
 }
 
 /// Fixed hash constants used only in deterministic/testing mode.
@@ -496,7 +500,12 @@ impl ClTds {
     }
 
     /// Allocates the 1 MB matrix on the heap, zeroed.
-    fn alloc(created_at: Option<Instant>, epoch_interval_ms: u64, hash_a: [u64; DEPTH], hash_b: [u64; DEPTH]) -> Self {
+    fn alloc(
+        created_at: Option<Instant>,
+        epoch_interval_ms: u64,
+        hash_a: [u64; DEPTH],
+        hash_b: [u64; DEPTH],
+    ) -> Self {
         // SAFETY: AtomicU32 with zeroed bytes = AtomicU32::new(0).
         // Guaranteed by Rust's atomic type representation.
         let rows = unsafe {
@@ -557,12 +566,8 @@ impl ClTds {
                 let decayed = apply_decay(old_count, steps);
                 let new_count = (decayed + 1).min(MAX_COUNT);
                 let new_val = pack(epoch_low, new_count);
-                match cell.compare_exchange_weak(
-                    old,
-                    new_val,
-                    Ordering::Relaxed,
-                    Ordering::Relaxed,
-                ) {
+                match cell.compare_exchange_weak(old, new_val, Ordering::Relaxed, Ordering::Relaxed)
+                {
                     Ok(_) => break,
                     Err(_) => continue,
                 }
@@ -679,17 +684,17 @@ impl ClTds {
         }
 
         let mut pos = 0;
-        let epoch = u64::from_le_bytes(bytes[pos..pos+8].try_into().ok()?);
+        let epoch = u64::from_le_bytes(bytes[pos..pos + 8].try_into().ok()?);
         pos += 8;
 
         let mut hash_a = [0u64; DEPTH];
         for item in hash_a.iter_mut() {
-            *item = u64::from_le_bytes(bytes[pos..pos+8].try_into().ok()?);
+            *item = u64::from_le_bytes(bytes[pos..pos + 8].try_into().ok()?);
             pos += 8;
         }
         let mut hash_b = [0u64; DEPTH];
         for item in hash_b.iter_mut() {
-            *item = u64::from_le_bytes(bytes[pos..pos+8].try_into().ok()?);
+            *item = u64::from_le_bytes(bytes[pos..pos + 8].try_into().ok()?);
             pos += 8;
         }
 
@@ -698,7 +703,7 @@ impl ClTds {
 
         for row in 0..DEPTH {
             for col in 0..WIDTH {
-                let val = u32::from_le_bytes(bytes[pos..pos+4].try_into().ok()?);
+                let val = u32::from_le_bytes(bytes[pos..pos + 4].try_into().ok()?);
                 sketch.rows[row].0[col].store(val, Ordering::Relaxed);
                 pos += 4;
             }
@@ -779,7 +784,9 @@ mod tests {
         // Same ID should map to different columns in different rows
         // (with very high probability for most IDs)
         let id = 0xDEADBEEF_u64;
-        let indices: Vec<usize> = (0..DEPTH).map(|r| compute_hash(id, r, &DEFAULT_HASH_A, &DEFAULT_HASH_B)).collect();
+        let indices: Vec<usize> = (0..DEPTH)
+            .map(|r| compute_hash(id, r, &DEFAULT_HASH_A, &DEFAULT_HASH_B))
+            .collect();
         // At least 2 of 4 should differ (probabilistic but near-certain)
         let unique: std::collections::HashSet<_> = indices.iter().collect();
         assert!(unique.len() >= 2, "hash functions not independent enough");
@@ -790,7 +797,12 @@ mod tests {
         // Insert 100K random-ish IDs, check bucket distribution
         let mut buckets = vec![0u32; WIDTH];
         for id in 0..100_000u64 {
-            let idx = compute_hash(id.wrapping_mul(0x12345), 0, &DEFAULT_HASH_A, &DEFAULT_HASH_B);
+            let idx = compute_hash(
+                id.wrapping_mul(0x12345),
+                0,
+                &DEFAULT_HASH_A,
+                &DEFAULT_HASH_B,
+            );
             buckets[idx] += 1;
         }
         let max = *buckets.iter().max().unwrap();
@@ -1125,8 +1137,7 @@ mod tests {
         let sketch = ClTds::new_deterministic();
         let size = sketch.memory_bytes();
         assert_eq!(
-            size,
-            1_048_576,
+            size, 1_048_576,
             "Matrix should be exactly 1 MB, got {} bytes",
             size
         );
@@ -1152,11 +1163,11 @@ mod tests {
         // This tests Claim 2 under realistic conditions.
         let sketch = ClTds::new_deterministic();
 
-        let n_heavy = 10u64;        // 10 heavy hitters (top ~1%)
-        let n_mice = 990u64;        // 990 normal IPs
-        let per_heavy = 8_000u64;   // 80K total from heavy hitters
-        let per_mouse = 20u64;      // 19.8K total from mice
-        // Total ≈ 100K packets, heavy = 80%
+        let n_heavy = 10u64; // 10 heavy hitters (top ~1%)
+        let n_mice = 990u64; // 990 normal IPs
+        let per_heavy = 8_000u64; // 80K total from heavy hitters
+        let per_mouse = 20u64; // 19.8K total from mice
+                               // Total ≈ 100K packets, heavy = 80%
 
         // Insert heavy hitters
         for id in 1..=n_heavy {
@@ -1179,7 +1190,9 @@ mod tests {
             assert!(
                 count >= per_heavy as u32,
                 "Zipf: heavy hitter {} not detected: count={} < {}",
-                id, count, per_heavy
+                id,
+                count,
+                per_heavy
             );
         }
 
@@ -1476,7 +1489,8 @@ mod tests {
             assert!(
                 decayed <= 15,
                 "Integration: heavy hitter {} not forgotten after decay: {}",
-                id, decayed
+                id,
+                decayed
             );
         }
 
@@ -1484,7 +1498,11 @@ mod tests {
         for _ in 0..500 {
             sketch.increment(42);
         }
-        assert_eq!(sketch.query(42), 500, "New traffic after decay should be exact");
+        assert_eq!(
+            sketch.query(42),
+            500,
+            "New traffic after decay should be exact"
+        );
 
         // Phase 6: Verify algorithm parameters are accessible
         let (eps, delta, w, d) = ClTds::algorithm_parameters();

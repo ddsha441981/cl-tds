@@ -16,8 +16,14 @@ fn main() {
     println!("║  CL-TDS Persistence Demo             ║");
     println!("╠══════════════════════════════════════╣");
     println!("║  Before save:                        ║");
-    println!("║    query(100) = {}                    ║", sketch.query(100));
-    println!("║    query(200) = {}                    ║", sketch.query(200));
+    println!(
+        "║    query(100) = {}                    ║",
+        sketch.query(100)
+    );
+    println!(
+        "║    query(200) = {}                    ║",
+        sketch.query(200)
+    );
 
     // Save to disk
     let bytes = sketch.to_bytes();
@@ -29,8 +35,14 @@ fn main() {
     let restored = ClTds::from_bytes(&loaded).expect("invalid snapshot");
 
     println!("║  After restore:                      ║");
-    println!("║    query(100) = {}                    ║", restored.query(100));
-    println!("║    query(200) = {}                    ║", restored.query(200));
+    println!(
+        "║    query(100) = {}                    ║",
+        restored.query(100)
+    );
+    println!(
+        "║    query(200) = {}                    ║",
+        restored.query(200)
+    );
     println!("║  Match: ✅                            ║");
     println!("╚══════════════════════════════════════╝");
 

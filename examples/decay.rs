@@ -23,8 +23,7 @@ fn main() {
     for i in 1..=8 {
         thread::sleep(Duration::from_millis(500));
         let count = sketch.query(id);
-        println!("║  After {}s:  count = {:<16}  ║",
-            i as f64 * 0.5, count);
+        println!("║  After {}s:  count = {:<16}  ║", i as f64 * 0.5, count);
         if count == 0 {
             println!("║  → Fully decayed!                    ║");
             break;

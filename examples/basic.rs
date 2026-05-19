@@ -28,9 +28,17 @@ fn main() {
     println!("╠══════════════════════════════════════╣");
     for &(label, real_count) in &traffic {
         let est = sketch.query(hash(label));
-        println!("║  {:<12} real={:<6} est={:<6} {}  ║",
-            label, real_count, est,
-            if est as u64 == real_count { "✅" } else { "≈" });
+        println!(
+            "║  {:<12} real={:<6} est={:<6} {}  ║",
+            label,
+            real_count,
+            est,
+            if est as u64 == real_count {
+                "✅"
+            } else {
+                "≈"
+            }
+        );
     }
     println!("║                                      ║");
     println!("║  Memory: {} bytes (1 MB)        ║", sketch.memory_bytes());

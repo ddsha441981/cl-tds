@@ -40,7 +40,10 @@ fn main() {
     let mpps = total as f64 / elapsed.as_secs_f64() / 1e6;
 
     println!("║  Total items:   {:>10}             ║", total);
-    println!("║  Time:          {:>7.1} ms             ║", elapsed.as_secs_f64() * 1000.0);
+    println!(
+        "║  Time:          {:>7.1} ms             ║",
+        elapsed.as_secs_f64() * 1000.0
+    );
     println!("║  Throughput:    {:>7.1} M/s             ║", mpps);
     println!("║  Memory:        1 MB (fixed)           ║");
     println!("║  Crashes:       0 ✅                    ║");
