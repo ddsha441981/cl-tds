@@ -1,0 +1,16 @@
+[package]
+name    = "cl-tds"
+version = "0.0.1"
+edition = "2021"
+rust-version = "1.56"
+description = "Cache-Locked Temporal Decay Sketch - 1 MB, lock-free streaming heavy-hitter detection with temporal decay"
+license = "Apache-2.0"
+authors = ["Deendayal Kumawat <deendayal_kumawat@outlook.com>"]
+repository = "https://github.com/ddsha441981/cl-tds"
+homepage = "https://github.com/ddsha441981/cl-tds"
+keywords = ["streaming", "heavy-hitters", "count-min-sketch", "probabilistic", "lock-free"]
+categories = ["algorithms", "data-structures", "concurrency"]
+readme = "README.md"
+
+[dependencies]
+# Zero external dependencies — pure std::sync::atomic algorithm
