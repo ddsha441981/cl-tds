@@ -462,6 +462,12 @@ pub struct ClTds {
     hash_b: [u64; DEPTH],
 }
 
+impl Default for ClTds {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl ClTds {
     /// Creates a new sketch in manual mode. You control decay by calling
     /// [`tick_epoch()`](Self::tick_epoch) yourself. Hash seeds are randomized.
@@ -624,7 +630,7 @@ impl ClTds {
     /// - `depth` — number of rows (4)
     pub fn algorithm_parameters() -> (f64, f64, usize, usize) {
         let epsilon = std::f64::consts::E / WIDTH as f64;
-        let delta = (-1.0 * DEPTH as f64).exp();
+        let delta = (-(DEPTH as f64)).exp();
         (epsilon, delta, WIDTH, DEPTH)
     }
 
@@ -677,13 +683,13 @@ impl ClTds {
         pos += 8;
 
         let mut hash_a = [0u64; DEPTH];
-        for i in 0..DEPTH {
-            hash_a[i] = u64::from_le_bytes(bytes[pos..pos+8].try_into().ok()?);
+        for item in hash_a.iter_mut() {
+            *item = u64::from_le_bytes(bytes[pos..pos+8].try_into().ok()?);
             pos += 8;
         }
         let mut hash_b = [0u64; DEPTH];
-        for i in 0..DEPTH {
-            hash_b[i] = u64::from_le_bytes(bytes[pos..pos+8].try_into().ok()?);
+        for item in hash_b.iter_mut() {
+            *item = u64::from_le_bytes(bytes[pos..pos+8].try_into().ok()?);
             pos += 8;
         }
 
